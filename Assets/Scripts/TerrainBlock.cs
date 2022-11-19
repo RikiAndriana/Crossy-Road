@@ -6,7 +6,7 @@ public class TerrainBlock : MonoBehaviour
 {
     [SerializeField] GameObject main;
     [SerializeField] GameObject repeat;
-    private int extent;
+    private int extent = 0;
     public int Extent { get => extent; }
     public void Build(int extent)
     {

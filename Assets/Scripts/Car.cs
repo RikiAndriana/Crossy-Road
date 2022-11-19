@@ -13,7 +13,8 @@ public class Car : MonoBehaviour
 
         if (this.transform.position.x < -(extent + 1) || this.transform.position.x > extent + 1)
         {
-            Destroy(this.gameObject);
+            // Destroy(this.gameObject);
+            PoolSystem.Instance.CarPool.Release(this.gameObject);
         }
 
     }

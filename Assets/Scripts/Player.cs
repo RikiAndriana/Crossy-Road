@@ -71,8 +71,6 @@ public class Player : MonoBehaviour
     }
     private void Jump(Vector3 targetDirection)
     {
-
-
         // atur rotasi
         var TargetPosition = transform.position + targetDirection;
         transform.LookAt(TargetPosition);

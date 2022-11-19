@@ -26,11 +26,18 @@ public class CarSpawner : MonoBehaviour
 
         var spawnPos = this.transform.position +
             Vector3.right * (isRight ? -(terrain.Extent + 1) : terrain.Extent + 1);
-        var go = Instantiate(
-            original: carPrefab,
+
+        // var go = Instantiate(
+        //     original: carPrefab,
+        //     position: spawnPos,
+        //     rotation: Quaternion.Euler(0, isRight ? 90 : -90, 0),
+        //     parent: this.transform);
+
+        var go = PoolSystem.Instance.CarPool.Get(
             position: spawnPos,
-            rotation: Quaternion.Euler(0, isRight ? 90 : -90, 0),
-            parent: this.transform);
+            rotation: Quaternion.Euler(0, isRight ? 90 : -90, 0)
+        );
+        go.transform.parent = this.transform;
 
         var car = go.GetComponent<Car>();
         car.SetUp(terrain.Extent);

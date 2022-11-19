@@ -44,11 +44,13 @@ public class GameManager : MonoBehaviour
 
     }
     private int playerLastMaxTravel;
+    private Coroutine gameOverCoroutine;
+
     private void Update()
     {
         // cek player masih hidup ga?
-        if (player.IsDie && gameOverPanel.activeInHierarchy == false)
-            StartCoroutine(ShowGameOverPanel());
+        if (player.IsDie && gameOverCoroutine == null)
+            gameOverCoroutine = StartCoroutine(ShowGameOverPanel());
 
         // Infinite Terrain system
         if (player.MaxTravel == playerLastMaxTravel)
@@ -77,7 +79,11 @@ public class GameManager : MonoBehaviour
         map.Remove(player.MaxTravel - 1 + backDistance);
 
         // hilangkan dari scene
-        Destroy(lastTB.gameObject);
+        // Destroy(lastTB.gameObject);
+        if (lastTB is Road)
+            PoolSystem.Instance.RoadPool.Release(lastTB.gameObject);
+        else
+            PoolSystem.Instance.GrassPool.Release(lastTB.gameObject);
 
         // setup lagi supaya player ga bisa gerak ke belakang
         player.SetUp(player.MaxTravel + backDistance, extent);
@@ -93,9 +99,19 @@ public class GameManager : MonoBehaviour
     }
     private void CreateTerrain(GameObject prefab, int zPos)
     {
-        var go = Instantiate(prefab, new Vector3(0, 0, zPos), Quaternion.identity);
+        // old code
+        // var go = Instantiate(prefab, new Vector3(0, 0, zPos), Quaternion.identity);
+
+        GameObject go;
+        if (prefab == road)
+            go = PoolSystem.Instance.RoadPool.Get(new Vector3(0, 0, zPos));
+        else
+            go = PoolSystem.Instance.GrassPool.Get(new Vector3(0, 0, zPos));
+
         var tb = go.GetComponent<TerrainBlock>();
-        tb.Build(extent);
+
+        if (tb.Extent != extent)
+            tb.Build(extent);
 
         map.Add(zPos, tb);
         // Debug.Log(map[zPos] is Road);
